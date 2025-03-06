@@ -1,8 +1,9 @@
-import {Button, Col, Input, Row} from 'antd'
+import {Button, Col, Input, Row,Checkbox,Form} from 'antd'
 import React,{useEffect, useState} from 'react'
 import { signinUser } from '../Config/authCall';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate, useNavigate } from 'react-router-dom';
+
 
 export default function Login({mail}) {
     const{user}=useAuth();
@@ -33,7 +34,7 @@ export default function Login({mail}) {
         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
             <Input
             size='small'
-            placeholder='Correo del usuario'
+            placeholder='Correo'
             value={userName}
             onChange={changeName}
             ></Input>

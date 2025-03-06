@@ -14,7 +14,7 @@ function App() {
           <Routes>
             <Route
               path='/login'
-              element={<Login mail={'emiliano.lara@softtek.com'}></Login>}
+              element={<Login></Login>}
             />
             <Route
               path='/navbar'

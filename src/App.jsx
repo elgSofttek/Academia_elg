@@ -5,27 +5,36 @@ import Navbar from './Components/Navbar';
 
 import { AuthProvider } from './hooks/useAuth';
 import { ProtectedRoute } from './Components/ProtectedRoute';
+import { TodoWrapper } from './Components/TodoWrapper';
 
 function App() {
   return (
     <div>
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route
-              path='/login'
-              element={<Login></Login>}
-            />
-            <Route
-              path='/navbar'
-              element={
-                <ProtectedRoute>
-                  <Navbar></Navbar>
-                </ProtectedRoute>
-              }
-            />
-     
-          </Routes>
+          <Navbar/>
+
+          <div style={{paddingTop:'60px'}}>
+              <Routes>
+                <Route
+                  path='/login'
+                  element={<Login></Login>}
+                />
+              
+                <Route
+                  path='/tasks'
+                  element={
+                    <ProtectedRoute>
+                      <TodoWrapper/>
+                    </ProtectedRoute>
+                  }
+                />
+        
+              </Routes>
+
+
+          </div>
+        
         </AuthProvider>
       </BrowserRouter>
     </div>

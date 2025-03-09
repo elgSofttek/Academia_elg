@@ -13,20 +13,34 @@ export default function Navbar() {
     },[user]);
 
     const readUser = async () => {
-        const luser = await readData('users', 'email', user.email);
-        if (luser.val()) {
-          console.log(luser.val()[Object.keys(luser.val())[0]]);
-        }
-        console.log('entered navbar')
-      
-        const luser2 = await readDataFirestore('users', 'email', user.email);
-
-        if (!luser2.empty) {
-          const userData = luser2.docs[0].data();
-          console.log('Firestore User',userData);
-          setLocalUser(userData);
-        }
-      };
+      if (!user || !user.email) return;
+  
+      try {
+          const luser = await readData('users', 'email', user.email);
+          if (luser.val()) {
+              console.log(luser.val()[Object.keys(luser.val())[0]]);
+          }
+          
+          const luser2 = await readDataFirestore('users', 'email', user.email);
+  
+          if (!luser2.empty) {
+              const userData = luser2.docs[0].data();
+              console.log('Firestore User', userData);
+              
+              if (!userData.permissions) {
+                  console.warn('El usuario no tiene la propiedad permissions');
+                  userData.permissions = {}; // Evita que sea undefined
+              }
+  
+              setLocalUser(userData);
+          } else {
+              console.warn('No se encontró el usuario en Firestore');
+          }
+      } catch (error) {
+          console.error('Error al leer datos del usuario:', error);
+      }
+  };
+  
     return (
         <div style={{textAlign:'right'}}>
             {localUser && <>{localUser.name}</>} <LogoutOutlined onClick={logout} />

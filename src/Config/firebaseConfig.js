@@ -16,3 +16,4 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseElg = initializeApp(firebaseConfig);
 export default firebaseElg;
+

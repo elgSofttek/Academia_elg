@@ -26,33 +26,10 @@ export const TodoWrapper = () => {
     fetchTodos();
   }, []);
 
-  // ✅ Agregar una tarea en Firestore con `creatorEmail` y `createdAt`
-  const addTodo = async (taskContent) => {
-    if (!auth.currentUser) {
-      console.error("❌ Error: Usuario no autenticado.");
-      return;
-    }
-    if (!taskContent.trim()) {
-      console.error("❌ Error: La tarea no puede estar vacía.");
-      return;
-  }
-
-    const newTask = {
-      task: taskContent,
-      creatorId: auth.currentUser.uid,
-      creatorName: auth.currentUser.displayName || "Anónimo",
-      creatorEmail: auth.currentUser.email || "No disponible",
-      completed: false,
-      isEditing: false
-    };
-
-    console.log("📢 Enviando tarea a Firestore:", newTask);
-
-
+  const addTodo = async (todo) => {
+    const newTask = { task: todo, completed: false, isEditing: false };
     const docId = await addDataFirestore(COLLECTION_NAME, newTask);
-    if (docId) {
-      setTodos([...todos, { id: docId, ...newTask }]);
-    }
+    setTodos([...todos, { id: docId, ...newTask }]);
   };
 
   // ✅ Marcar una tarea como completada en Firestore
@@ -103,7 +80,7 @@ export const TodoWrapper = () => {
   return (
     <div style={{ maxWidth: '600px', margin: 'auto' }}>
       <Typography.Title level={2}>To-Do List</Typography.Title>
-      <TodoForm addTodo={addTodo} />
+      <TodoForm addTodo={addTodo} setTodos={setTodos} todos={todos} />
       <List
         bordered
         dataSource={todos}

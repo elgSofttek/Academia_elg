@@ -2,7 +2,7 @@ import React, { useEffect,useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { LogoutOutlined } from '@ant-design/icons';
 import { readData } from '../Config/realtimeCalls';
-import { readDataFirestore }from '../Config/firestoreCalls'
+import { readDataFirestore }from '../Config/firestoreCalls';
 
 
 export default function Navbar() {
@@ -17,9 +17,14 @@ export default function Navbar() {
         if (luser.val()) {
           console.log(luser.val()[Object.keys(luser.val())[0]]);
         }
+        console.log('entered navbar')
+      
         const luser2 = await readDataFirestore('users', 'email', user.email);
+
         if (!luser2.empty) {
-          setLocalUser(luser2.docs[0].data());
+          const userData = luser2.docs[0].data();
+          console.log('Firestore User',userData);
+          setLocalUser(userData);
         }
       };
     return (
@@ -28,3 +33,4 @@ export default function Navbar() {
         </div>
     );
 }
+

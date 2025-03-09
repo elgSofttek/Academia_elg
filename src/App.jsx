@@ -12,19 +12,18 @@ function App() {
     <div>
       <BrowserRouter>
         <AuthProvider>
-          <Navbar/>
-
           <div style={{paddingTop:'60px'}}>
               <Routes>
                 <Route
                   path='/login'
                   element={<Login></Login>}
                 />
-              
+                
                 <Route
                   path='/tasks'
                   element={
                     <ProtectedRoute>
+                      <Navbar/>
                       <TodoWrapper/>
                     </ProtectedRoute>
                   }

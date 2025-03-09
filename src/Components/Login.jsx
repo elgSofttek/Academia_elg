@@ -7,7 +7,6 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
-
 export default function Login({mail}) {
     
     
@@ -79,10 +78,5 @@ export default function Login({mail}) {
         </Form>
     </div>
       
-    
-
-    
-      
-
   )
 }

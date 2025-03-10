@@ -2,10 +2,19 @@ import React from 'react';
 import { Button, List, Typography, Checkbox } from 'antd';
 
 export const Todo = ({ task, deleteTodo, editTodo, toggleComplete }) => {
-  // Verifica que createdAt esté definido antes de formatearlo
-  const formattedDate = task.createdAt?.seconds 
-    ? new Date(task.createdAt.seconds * 1000).toLocaleString() 
-    : "Fecha desconocida";
+  // 🔹 Verifica si `createdAt` es un timestamp válido antes de convertirlo
+  const formattedDate = task.createdAt
+  ? (task.createdAt.seconds 
+      ? new Date(task.createdAt.seconds * 1000).toLocaleString("es-MX", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        })
+      : task.createdAt) // 🔹 Si es texto, simplemente lo muestra
+  : "Sin fecha registrada";
 
   return (
     <List.Item
@@ -20,7 +29,7 @@ export const Todo = ({ task, deleteTodo, editTodo, toggleComplete }) => {
       />
       <div style={{ marginLeft: '10px' }}>
         <Typography.Text delete={task.completed} style={{ cursor: 'pointer' }}>
-          {task.task}
+          {task.content||"Sin descripción"}
         </Typography.Text>
         <p style={{ margin: 0 }}>Creado: {formattedDate}</p>
         <p style={{ margin: 0 }}>Por: {task.creatorEmail || "Desconocido"}</p>

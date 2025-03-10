@@ -46,16 +46,17 @@ export const readAllDataFirestore = async (path) => {
 
 export const addDataFirestore = async (path, data) => {
     try {
-        console.log("📢 Datos recibidos antes de agregar a Firestore:", data);
+        console.log("📢 Datos recibidos antes de agregar a Firestore:", JSON.stringify(data, null, 2));
 
-        if (!data.creatorId || !data.creatorName || !data.tasks || !data.creatorEmail) {
-            console.error("❌ Faltan datos obligatorios para la tarea:", data);
+        if (!data.creatorId || !data.creatorName || !data.content || !data.creatorEmail) {
+            console.error("❌ Faltan datos obligatorios para la tarea:", JSON.stringify(data, null, 2));
             return null;
         }
 
         const newData = {
             ...data,
-            createdAt: serverTimestamp(), // 🔥 Firestore genera la fecha aquí
+            content: data.content.trim() || "Tarea sin título", // 🔹 Asegura que siempre haya contenido
+            createdAt: serverTimestamp(), // 🔥 Firestore generará la fecha aquí
             completed: false
         };
 

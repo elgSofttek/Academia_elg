@@ -27,6 +27,30 @@ export const readDataFirestore = async (path, child, value) => {
     }
 };
 
+export const readUserTasks = async (userId) => {
+    try {
+        const q = query(collection(db, "tasks"), where("creatorId", "==", userId));
+        const querySnapshot = await getDocs(q);
+
+        return querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+    } catch (error) {
+        console.error("❌ Error al obtener las tareas del usuario:", error);
+        return [];
+    }
+};
+export const checkIfAdmin = async (userId) => {
+    try {
+        const userDoc = await getDoc(doc(db, "users", userId));
+        return userDoc.exists() && userDoc.data().permissions?.admin === true;
+    } catch (error) {
+        console.error("❌ Error al verificar permisos de administrador:", error);
+        return false;
+    }
+};
+
 // ✅ Leer todos los documentos de una colección
 export const readAllDataFirestore = async (path) => {
     try {
@@ -73,7 +97,18 @@ export const addDataFirestore = async (path, data) => {
 // ✅ Actualizar documento (Ejemplo: marcar tarea como completada)
 export const updateDataFirestore = async (path, docId, data) => {
     try {
-        await updateDoc(doc(db, path, docId), data);
+        console.log("📢 Actualizando Firestore con:", JSON.stringify(data, null, 2));
+
+        // 🔹 Asegurar que 'content' se actualiza correctamente
+        const updateFields = {};
+        if (data.task) {
+            updateFields.content = data.task; // 🔥 Guarda la actualización en 'content'
+        }
+        if (typeof data.isEditing !== "undefined") {
+            updateFields.isEditing = data.isEditing; // 🔥 Mantiene el estado de edición
+        }
+
+        await updateDoc(doc(db, path, docId), updateFields);
         console.log(`✅ Tarea actualizada correctamente: ${docId}`);
     } catch (error) {
         console.error("❌ Error al actualizar la tarea:", error);

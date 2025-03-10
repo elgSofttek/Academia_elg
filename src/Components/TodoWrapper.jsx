@@ -13,23 +13,30 @@ export const TodoWrapper = () => {
   const auth = getAuth();
 
   // ✅ Cargar tareas desde Firestore al montar el componente
-  useEffect(() => {
+useEffect(() => {
     const fetchTodos = async () => {
-      try {
-        const fetchedTodos = await readAllDataFirestore(COLLECTION_NAME);
-        console.log('📢 Tareas obtenidas de Firestore:', fetchedTodos);
-        setTodos(fetchedTodos);
-      } catch (error) {
-        console.error("❌ Error al obtener tareas:", error);
-      }
+        if (!auth.currentUser) return;
+
+        console.log("🔄 Cargando tareas para:", auth.currentUser.email);
+
+        try {
+            const fetchedTodos = await readUserTasks(auth.currentUser.uid);
+            console.log('📢 Tareas obtenidas de Firestore:', fetchedTodos);
+            setTodos(fetchedTodos);
+        } catch (error) {
+            console.error("❌ Error al obtener tareas:", error);
+        }
     };
+
     fetchTodos();
-  }, []);
+}, [auth.currentUser]); // 🔥 Se ejecuta cuando el usuario cambia
+
 
   const addTodo = async (todo) => {
     const newTask = { task: todo, completed: false, isEditing: false };
     const docId = await addDataFirestore(COLLECTION_NAME, newTask);
     setTodos([...todos, { id: docId, ...newTask }]);
+        setTodos([...todos, { id: docId, ...newTask }]);
   };
 
   // ✅ Marcar una tarea como completada en Firestore
@@ -67,15 +74,23 @@ export const TodoWrapper = () => {
   };
 
   // ✅ Editar una tarea en Firestore
-  const editTask = async (task, id) => {
+  const editTask = async (newContent, id) => {
     if (!id) {
-      console.error("❌ Error: No se puede actualizar la tarea, id es undefined.");
-      return;
+        console.error("❌ Error: No se puede actualizar la tarea, ID es undefined.");
+        return;
     }
 
-    await updateDataFirestore(COLLECTION_NAME, id, { task, isEditing: false });
-    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, task, isEditing: false } : todo)));
-  };
+    if (!newContent) {
+        console.error("❌ Error: No se puede actualizar, contenido vacío.");
+        return;
+    }
+
+    await updateDataFirestore(COLLECTION_NAME, id, { content: newContent, isEditing: false });
+
+    setTodos(todos.map((todo) =>
+        todo.id === id ? { ...todo, content: newContent, isEditing: false } : todo
+    ));
+};
 
   return (
     <div style={{ maxWidth: '600px', margin: 'auto' }}>

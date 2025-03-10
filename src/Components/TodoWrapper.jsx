@@ -12,25 +12,18 @@ export const TodoWrapper = () => {
   const [todos, setTodos] = useState([]);
   const auth = getAuth();
 
-  // ✅ Cargar tareas desde Firestore al montar el componente
-useEffect(() => {
+  useEffect(() => {
     const fetchTodos = async () => {
-        if (!auth.currentUser) return;
-
-        console.log("🔄 Cargando tareas para:", auth.currentUser.email);
-
-        try {
-            const fetchedTodos = await readUserTasks(auth.currentUser.uid);
-            console.log('📢 Tareas obtenidas de Firestore:', fetchedTodos);
-            setTodos(fetchedTodos);
-        } catch (error) {
-            console.error("❌ Error al obtener tareas:", error);
-        }
+      try {
+        const fetchedTodos = await readAllDataFirestore(COLLECTION_NAME);
+        console.log('Tareas obtenidas de Firestore:', fetchedTodos);
+        setTodos(fetchedTodos);
+      } catch (error) {
+        console.error("Error al obtener tareas:", error);
+      }
     };
-
     fetchTodos();
-}, [auth.currentUser]); // 🔥 Se ejecuta cuando el usuario cambia
-
+  }, []);
 
   const addTodo = async (todo) => {
     const newTask = { task: todo, completed: false, isEditing: false };
@@ -39,7 +32,6 @@ useEffect(() => {
         setTodos([...todos, { id: docId, ...newTask }]);
   };
 
-  // ✅ Marcar una tarea como completada en Firestore
   const toggleComplete = async (id, completed) => {
     if (!id) {
       console.error("❌ Error: No se puede actualizar, id es undefined.");
@@ -50,10 +42,9 @@ useEffect(() => {
     setTodos(todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)));
   };
 
-  // ✅ Eliminar una tarea en Firestore
   const deleteTodo = async (id) => {
     if (!id) {
-      console.error("❌ Error: No se puede eliminar, id es undefined.");
+      console.error("Error: No se puede eliminar, id es undefined.");
       return;
     }
 
@@ -62,7 +53,6 @@ useEffect(() => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
-  // ✅ Habilitar modo edición en Firestore
   const editTodo = async (id, isEditing) => {
     if (!id) {
       console.error("❌ Error: No se puede editar, id es undefined.");
@@ -73,7 +63,6 @@ useEffect(() => {
     setTodos(todos.map((todo) => (todo.id === id ? { ...todo, isEditing: !todo.isEditing } : todo)));
   };
 
-  // ✅ Editar una tarea en Firestore
   const editTask = async (newContent, id) => {
     if (!id) {
         console.error("❌ Error: No se puede actualizar la tarea, ID es undefined.");

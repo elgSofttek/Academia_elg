@@ -25,8 +25,7 @@ export const signinUser=(email, password)=>{
 export const logoutFirebase=()=>{
     signOut(auth)
     .then(() => {
-      // Profile updated!
-      // ...
+ 
       console.log("Usuario salió")
     }).catch((error) => {
       console.log(error)

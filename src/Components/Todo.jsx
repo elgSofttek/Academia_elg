@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, List, Typography, Checkbox } from 'antd';
 
 export const Todo = ({ task, deleteTodo, editTodo, toggleComplete }) => {
-  // 🔹 Verifica si `createdAt` es un timestamp válido antes de convertirlo
+  
   const formattedDate = task.createdAt
   ? (task.createdAt.seconds 
       ? new Date(task.createdAt.seconds * 1000).toLocaleString("es-MX", {
@@ -13,7 +13,7 @@ export const Todo = ({ task, deleteTodo, editTodo, toggleComplete }) => {
           minute: "2-digit",
           second: "2-digit"
         })
-      : task.createdAt) // 🔹 Si es texto, simplemente lo muestra
+      : task.createdAt) 
   : "Sin fecha registrada";
 
   return (

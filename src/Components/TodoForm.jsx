@@ -4,29 +4,34 @@ import {
     collection,
     addDoc,
     getFirestore,
+    serverTimestamp,
 }from 'firebase/firestore';
 import firebaseElg from '../Config/firebaseConfig';
+import { getAuth,onAuthStateChanged } from 'firebase/auth';
+
+
 
 export const TodoForm = ({ addTodo, setTodos, todos }) => {
   const db = getFirestore(firebaseElg);
   const [value, setValue] = useState('');
+  const auth=getAuth();
 
   const handleSubmit = async () => {
-    if (!value.trim()) return; // 🔹 Evita agregar tareas vacías
+    if (!value.trim()) return; 
 
     const data = {
-      "creatorName" : "Emiliano",
+      "creatorName" : auth.currentUser.displayName,
       "content": value,
       "createdAt": "03-09-2025",
-      "creatorEmail":"e2002lara@gmail.com",
-      "creatorId":"emiliano",
-      "creatorName": "Emiliano",
+      "creatorEmail":auth.currentUser.email,
+      "creatorId":" ",
+      "creatorName": auth.currentUser.displayName,
       "tasks":value,
     }
 
     const docRef = await addDoc(collection(db, "tasks"), data);
     setTodos([...todos, data]);
-    setValue(''); // 🔹 Limpia el input después de agregar la tarea
+    setValue(''); 
   };
 
   return (
